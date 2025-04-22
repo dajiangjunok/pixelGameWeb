@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from 'react'
+import { memo, useEffect } from 'react'
 import { useReadContract } from 'wagmi'
 import { contractConfig } from '@/lib/context/ContractContext'
 import { IColorPexels, IPixelContainerProps, IPixel } from '../interface.ts'

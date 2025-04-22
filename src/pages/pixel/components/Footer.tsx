@@ -30,7 +30,7 @@ const Footer = memo(
       useWaitForTransactionReceipt({
         hash
       })
-    const { data: pixels, refetch } = useReadContract({
+    const { refetch } = useReadContract({
       ...contractConfig,
       functionName: 'getPixelArray'
     })

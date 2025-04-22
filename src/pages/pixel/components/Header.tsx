@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import { memo } from 'react'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import autherImg from '@/assets/auther.png'
 
