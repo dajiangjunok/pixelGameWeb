@@ -24,7 +24,7 @@ import App from './App.tsx'
 
 const config = getDefaultConfig({
   appName: 'PixelGame',
-  projectId: 'm89f61yfqM-Yk2WMpMwq3liE8Hn2RdUr',
+  projectId: 'Ax3SyScu2TIUGoQKeDQsJMToQHl3EKMy',
   chains: [mainnet, polygon, optimism, arbitrum, base, sepolia, monadTestnet]
   // ssr: true, // If your dApp uses server side rendering (SSR)
 })

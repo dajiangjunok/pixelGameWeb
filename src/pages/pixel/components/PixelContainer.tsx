@@ -1,13 +1,7 @@
-import React, { memo, useState, useContext, useEffect } from 'react'
+import React, { memo, useEffect } from 'react'
 import { useReadContract } from 'wagmi'
 import { contractConfig } from '@/lib/context/ContractContext'
-import { IColorPexels } from '../interface.ts'
-
-interface IPixelContainerProps {
-  selectedColor: string
-  colorPexelsList: IColorPexels[]
-  setColorPexelsList: React.Dispatch<React.SetStateAction<IColorPexels[]>>
-}
+import { IColorPexels, IPixelContainerProps, IPixel } from '../interface.ts'
 
 const PixelContainer = memo(
   ({
@@ -26,8 +20,11 @@ const PixelContainer = memo(
     useEffect(() => {
       if (pixels && !isPending) {
         // 假设 pixels 返回的是一个数组，包含每个像素的颜色信息
-        const updatedPixels = pixels.map((pixel: number, index: number) => ({
-          color: pixel ? `#${pixel.toString(16).padStart(6, '0')}` : '#ffffff',
+        const updatedPixels = pixels.map((pixel: IPixel, index: number) => ({
+          imgUrl: pixel.pixelImage,
+          color: pixel.pixelColor
+            ? `#${pixel.pixelColor.toString(16).padStart(6, '0')}`
+            : '#ffffff',
           isActive: colorPexelsList[index].isActive
         }))
         setColorPexelsList(updatedPixels)
@@ -66,7 +63,9 @@ const PixelContainer = memo(
                   item.isActive ? 'scale-105 shadow-lg z-10 border-[3px]' : ''
                 }`}
                 style={{
-                  backgroundColor: item.color,
+                  background: item.imgUrl
+                    ? `url(${item.imgUrl}) center center/cover no-repeat`
+                    : item.color,
                   borderColor: item.isActive ? selectedColor : ''
                 }}
                 onClick={() => handlePixel(index)}

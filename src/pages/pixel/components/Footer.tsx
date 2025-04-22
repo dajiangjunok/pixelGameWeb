@@ -5,7 +5,8 @@ import {
   useWaitForTransactionReceipt,
   useReadContract
 } from 'wagmi'
-import { IColorPexels } from '../interface.ts'
+import { IColorPexels, IPixel } from '../interface.ts'
+import GitHubAvatar from '@/components/GitHubAvatar'
 
 interface IFooterProps {
   selectedColor: string
@@ -33,6 +34,9 @@ const Footer = memo(
       ...contractConfig,
       functionName: 'getPixelArray'
     })
+
+    const [username, setUsername] = useState('')
+    const [avatarUrl, setAvatarUrl] = useState<string>('')
     ////////////
     // effect //
     ////////////
@@ -42,9 +46,10 @@ const Footer = memo(
         refetch().then(res => {
           if (res.data) {
             const updatedPixels = res.data.map(
-              (pixel: number, index: number) => ({
-                color: pixel
-                  ? `#${pixel.toString(16).padStart(6, '0')}`
+              (pixel: IPixel, index: number) => ({
+                imgUrl: pixel.pixelImage,
+                color: pixel.pixelColor
+                  ? `#${pixel.pixelColor.toString(16).padStart(6, '0')}`
                   : '#ffffff',
                 isActive: colorPexelsList[index].isActive
               })
@@ -70,30 +75,53 @@ const Footer = memo(
         writeContract({
           ...contractConfig,
           functionName: 'purchasePixel',
-          args: [BigInt(pixelIndex), BigInt(pixelColor)],
+          args: [BigInt(pixelIndex), BigInt(pixelColor), avatarUrl],
           // 添加value参数传递以太币，这里设置为0.002 ETH
-          value: BigInt(0.002 * 1e18) // 0.002 ETH in wei
+          value: BigInt(0.02 * 1e18) // 0.002 ETH in wei
         })
+
+        setAvatarUrl('')
       } else {
         alert('请先选择一个像素框')
       }
     }
 
     return (
-      <div className="mt-15 w-[350px] mx-auto bg-white border border-gray-200 rounded-lg p-4">
+      <div className="mt-8 w-[350px] mx-auto bg-white border border-gray-200 rounded-lg p-4">
+        {/* 通过昵称获取github上对应头像 */}
+        <div className="flex items-center gap-2 mb-4">
+          <span>Github:</span>
+          <input
+            style={{ width: '160px' }}
+            type="text"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+            placeholder="GitHub用户名"
+            className="px-2 py-1 text-sm border rounded"
+          />
+          <GitHubAvatar
+            username={username}
+            avatarUrl={avatarUrl}
+            setAvatarUrl={setAvatarUrl}
+            size={32}
+          />
+        </div>
         <div className="flex justify-between items-center">
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col items-center">
             <input
               type="color"
               value={selectedColor}
               onChange={handleColorChange}
-              className="w-12 h-12 cursor-pointer rounded"
+              className="w-8 h-8 cursor-pointer rounded"
             />
-            <span className="text-gray-600 font-mono">{selectedColor}</span>
+            <span className="text-gray-600 font-mono text-sm">
+              {selectedColor}
+            </span>
           </div>
+
           <button
             disabled={isPending}
-            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            className="px-2 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
             onClick={e => handleSubmit(e)}
           >
             {isPending ? '确认中...' : '确认'}
